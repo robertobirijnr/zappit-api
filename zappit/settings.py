@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'posts',
-    'api',
     'rest_framework',
     'rest_framework.authtoken',
+    'admin_api',
+    'users'
 ]
 
 REST_FRAMEWORK = {
@@ -86,8 +86,13 @@ WSGI_APPLICATION = 'zappit.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_admin',
+        'USER':'root',
+        'PASSWORD': 'root',
+        'HOST':'admin_db',
+        'PORT': '3306'
+
     }
 }
 
@@ -129,3 +134,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'users.User'

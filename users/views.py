@@ -64,9 +64,10 @@ class AuthenticatedUser(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self,request):
-        user = UserSerializer(request.user)
+        data = UserSerializer(request.user).data
+        data['permissions'] = [p['name'] for p in data['role']['permissions']]
         return Response({
-            'data':user.data
+            'data':data
         })
 
 
@@ -142,15 +143,55 @@ class UserGenericAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.
         return self.list(request)
     
     def post(self,request):
+        request.data.update({
+            'password':1234,
+            'role':request.data['role_id']
+        })
         return Response({
             'data': self.create(request).data
         })
     
     def put(self, request,pk=None):
+
+        if request.data['role_id']:
+             request.data.update({
+            'role':request.data['role_id']
+        })
+
         return Response({
-            'data': self.update(request,pk).data
+            'data': self.partial_update(request,pk).data
         })
     
     def delete(self,request,pk=None):
         return self.destroy(request,pk)
+    
+
+
+class ProfileInfoAPIVIEW(APIView):
+     authentication_classes = [JWTAuthentication]
+     permission_classes = [IsAuthenticated]
+
+
+     def put(self, request, pk=None):
+         user = request.user
+         serializer = UserSerializer(user, data=request.data, partial=True)
+         serializer.is_valid(raise_exception=True)
+         return Response(serializer.data)
+         
+
+
+class ProfilePasswordAPIVIEW(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+    def put(self, request, pk=None):
+         user = request.user
+
+         if request.data['password'] != request.data['password_confirm']:
+             raise exceptions.ValidationError('Password do not match')
+         
+         serializer = UserSerializer(user, data=request.data, partial=True)
+         serializer.is_valid(raise_exception=True)
+         return Response(serializer.data)
 

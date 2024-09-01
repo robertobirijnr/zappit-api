@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'admin_api',
-    'users'
+    'users',
+    'products'
 ]
 
 REST_FRAMEWORK = {
@@ -136,3 +137,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'users.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')

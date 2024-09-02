@@ -36,6 +36,7 @@ def login(request):
     
     response = Response()
 
+# Setting JWT Token
     token = generate_access_token(user)
     response.set_cookie(key='jwt', value=token, httponly=True)
 
